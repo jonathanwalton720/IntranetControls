@@ -15,23 +15,33 @@ namespace Intranet.Controls
     {
         protected override void GenerateFormattedListing(HtmlTextWriter output, IListing listing)
         {
-            output.AddAttribute(HtmlTextWriterAttribute.Href, _relativePath);
+            output.AddAttribute(HtmlTextWriterAttribute.Href, this.relativePath);
             output.AddAttribute(HtmlTextWriterAttribute.Target, "_blank");
             output.RenderBeginTag(HtmlTextWriterTag.A);
-            if (listing.Title.Split(Delimiter.ToCharArray()).Count() == 2 && Delimiter != String.Empty)
-                output.Write(listing.Title.Split(Delimiter.ToCharArray())[0]);
-            else
-                output.Write(listing.Title);
-            output.RenderEndTag();
 
+            if (listing.Title.Split(this.Delimiter.ToCharArray()).Count() == 2 && this.Delimiter != string.Empty)
+            {
+                output.Write(listing.Title.Split(this.Delimiter.ToCharArray())[0]);
+            }
+            else
+            {
+                output.Write(listing.Title);
+            }
+
+            output.RenderEndTag();
             output.AddAttribute(HtmlTextWriterAttribute.Class, "alignRight");
             output.RenderBeginTag(HtmlTextWriterTag.Span);
-            if (listing.Title.Split(Delimiter.ToCharArray()).Count() == 2 && Delimiter != String.Empty)
-                output.Write(listing.Title.Split(Delimiter.ToCharArray())[1]);
-            else
-                output.Write(String.Empty);
-            output.RenderEndTag();
 
+            if (listing.Title.Split(this.Delimiter.ToCharArray()).Count() == 2 && this.Delimiter != string.Empty)
+            {
+                output.Write(listing.Title.Split(this.Delimiter.ToCharArray())[1]);
+            }
+            else
+            {
+                output.Write(string.Empty);
+            }
+
+            output.RenderEndTag();
         }
     }
 }

@@ -11,16 +11,22 @@ namespace Intranet.Controls
     /// </summary>
     public class FileListing : IListing
     {
-        private String _Path = String.Empty;
-        private String _Title = String.Empty;
-        
+        private string path = string.Empty;
+        private string title = string.Empty;
+
+        public FileListing(string path)
+        {
+            this.Path = path;
+            this.Title = System.IO.Path.GetFileNameWithoutExtension(this.Path);
+        }
+
         /// <summary>
         /// Represents the file's name without the extension.
         /// </summary>
-        public String Title
+        public string Title
         {
-            get { return _Title; }
-            private set { _Title = value; }
+            get { return this.title; }
+            private set { this.title = value; }
         }
 
         /// <summary>
@@ -28,20 +34,15 @@ namespace Intranet.Controls
         /// </summary>
         public string Path
         {
-            get { return _Path; }
+            get { return this.path; }
+
             private set
             {
                 if (System.IO.File.Exists(value))
                 {
-                    _Path = value;
+                    this.path = value;
                 }
             }
-        }
-
-        public FileListing(String path)
-        {
-            Path = path;
-            Title = System.IO.Path.GetFileNameWithoutExtension(this.Path);
         }
     }
 }

@@ -22,33 +22,28 @@ namespace Intranet.Controls
         {
             get
             {
-                String s = (String)ViewState["Path"];
-                return ((s == null) ? "[" + this.ID + "]" : s);
+                string s = (string)this.ViewState["Path"];
+                return (s == null) ? "[" + this.ID + "]" : s;
             }
 
             set
             {
-                ViewState["Path"] = value;
+                this.ViewState["Path"] = value;
             }
         }
 
         protected override void Render(HtmlTextWriter output)
         {
-            RenderContents(output);
+            this.RenderContents(output);
         }
 
         protected override void RenderContents(HtmlTextWriter output)
         {
-            output.AddAttribute(HtmlTextWriterAttribute.Href, Path);
+            output.AddAttribute(HtmlTextWriterAttribute.Href, this.Path);
             output.AddAttribute(HtmlTextWriterAttribute.Target, "_blank");
             output.RenderBeginTag(HtmlTextWriterTag.A);
-            output.Write(Path);
+            output.Write(this.Path);
             output.RenderEndTag();
         }
     }
-
-
-
-
 }
-

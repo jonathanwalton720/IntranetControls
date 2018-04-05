@@ -20,11 +20,9 @@ namespace Intranet.Controls
     [ToolboxData("<{0}:HyperLinkDirectory runat=server />")]
     public class HyperLinkDirectory : WebControl
     {
+        private string serverPath = string.Empty;
+        private BoolEnum writeBreak = BoolEnum.No;
 
-        private string _ServerPath = String.Empty;
-        private BoolEnum _WriteBreak = BoolEnum.No;
-
-        #region properties
         [Bindable(true)]
         [Category("Appearance")]
         [DefaultValue("")]
@@ -33,13 +31,13 @@ namespace Intranet.Controls
         {
             get
             {
-                String s = (String)ViewState["Path"];
-                return ((s == null) ? "[" + this.ID + "]" : s);
+                string s = (string)this.ViewState["Path"];
+                return (s == null) ? "[" + this.ID + "]" : s;
             }
 
             set
             {
-                ViewState["Path"] = value;
+                this.ViewState["Path"] = value;
             }
         }
 
@@ -51,7 +49,7 @@ namespace Intranet.Controls
         {
             get
             {
-                return _WriteBreak.ToString();
+                return this.writeBreak.ToString();
             }
 
             set
@@ -59,38 +57,36 @@ namespace Intranet.Controls
                 BoolEnum b;
                 if (BoolEnum.TryParse(value, true, out b))
                 {
-                    _WriteBreak = b;
+                    this.writeBreak = b;
                 }
-            } 
+            }
         }
-        #endregion properties
 
-        #region methods
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             try
             {
-                _ServerPath = HttpContext.Current.Server.MapPath(this.Path);
+                this.serverPath = HttpContext.Current.Server.MapPath(this.Path);
             }
             catch
             {
-                _ServerPath = String.Empty;
+                this.serverPath = string.Empty;
             }
         }
 
         protected override void Render(HtmlTextWriter output)
         {
-            RenderContents(output);
+            this.RenderContents(output);
         }
 
         protected override void RenderContents(HtmlTextWriter output)
         {
             try
             {
-                if (!String.IsNullOrEmpty(_ServerPath))
+                if (!string.IsNullOrEmpty(this.serverPath))
                 {
-                    List<string> filePaths = Directory.EnumerateFiles(_ServerPath).ToList();
+                    List<string> filePaths = Directory.EnumerateFiles(this.serverPath).ToList();
                     foreach (string filePath in filePaths)
                     {
                         if (System.IO.Path.GetFileName(filePath).ToUpper() != "THUMBS.DB")
@@ -107,6 +103,7 @@ namespace Intranet.Controls
                             {
                                 output.WriteBreak();
                             }
+
                             output.WriteLine();
                         }
                     }
@@ -114,10 +111,8 @@ namespace Intranet.Controls
             }
             catch
             {
-
+                // TODO: need to do something here
             }
-
-        } 
-        #endregion methods
+        }
     }
 }

@@ -15,13 +15,16 @@ namespace Intranet.Controls
     {
         protected override void GenerateFormattedHeading(HtmlTextWriter output, IListing listing)
         {
-
             output.RenderBeginTag(HtmlTextWriterTag.Strong);
 
-            if (listing.Title.Contains(Delimiter) && Delimiter != String.Empty)
-                output.Write(listing.Title.Split(Delimiter.ToCharArray())[1]);
+            if (listing.Title.Contains(this.Delimiter) && this.Delimiter != string.Empty)
+            {
+                output.Write(listing.Title.Split(this.Delimiter.ToCharArray())[1]);
+            }
             else
+            {
                 output.Write(listing.Title);
+            }
 
             output.RenderEndTag();
         }

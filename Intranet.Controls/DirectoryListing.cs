@@ -11,101 +11,100 @@ namespace Intranet.Controls
     /// </summary>
     public class DirectoryListing : IListing
     {
-        #region fields
-        private int? _FileCount = null;
-        private String _Path = String.Empty;
-        private String _Title = String.Empty;
-        private List<IListing> _Listings = new List<IListing>();
-        #endregion fields
+        private int? fileCount = null;
+        private string path = string.Empty;
+        private string title = string.Empty;
+        private List<IListing> listings = new List<IListing>();
 
-        #region properties
-        /// <summary>
-        /// Represents the name of the directory.
-        /// </summary>
-        public String Title
+        public DirectoryListing(string path)
+            : this(path, true)
         {
-            get { return _Title; }
-            set { _Title = value; }
+        }
+
+        public DirectoryListing(string path, bool includeSubDirectories)
+        {
+            this.Path = path;
+
+            if (this.Path != string.Empty)
+            {
+                this.Title = System.IO.Path.GetFileNameWithoutExtension(this.Path);
+
+                foreach (string filePath in System.IO.Directory.EnumerateFiles(this.Path))
+                {
+                    FileListing listing = new FileListing(filePath);
+                    this.listings.Add(listing);
+                    this.listings = this.listings.OrderBy(o => o.Title).ToList();
+                }
+
+                if (includeSubDirectories)
+                {
+                    foreach (string directoryPath in System.IO.Directory.EnumerateDirectories(this.Path))
+                    {
+                        DirectoryListing listing = new DirectoryListing(directoryPath, false);
+                        this.listings.Add(listing);
+                    }
+                }
+            }
         }
 
         /// <summary>
-        /// Represents the directory's path on the server.
+        /// Gets the title of the directory.
+        /// </summary>
+        public string Title
+        {
+            get { return this.title; }
+            set { this.title = value; }
+        }
+
+        /// <summary>
+        /// Gets the directory's path on the server.
         /// </summary>
         public string Path
         {
-            get { return _Path; }
+            get { return this.path; }
+
             private set
             {
                 if (value.Contains('\\'))
                 {
                     value = value.Replace('\\', '/');
                 }
+
                 if (System.IO.Directory.Exists(value) && !System.IO.Path.HasExtension(value))
                 {
-                    _Path = value;
+                    this.path = value;
                 }
             }
         }
 
         /// <summary>
-        /// Represents the number of FileListings found in the directory.
+        /// Gets the total count of FileListings found in the directory.
         /// </summary>
         public int FileCount
         {
-            get 
+            get
             {
-                if (!_FileCount.HasValue)
+                if (!this.fileCount.HasValue)
                 {
-                    _FileCount = 0;
+                    this.fileCount = 0;
                     foreach (IListing listing in this.GetListings())
                     {
-                        if (listing is FileListing) _FileCount++;
+                        if (listing is FileListing)
+                        {
+                            this.fileCount++;
+                        }
                     }
                 }
-                return _FileCount.Value;
+
+                return this.fileCount.Value;
             }
         }
-        #endregion properties
 
-        #region constructors
-        public DirectoryListing(String path) : this(path, true)
-        {
-
-        }
-
-        public DirectoryListing(String path, bool includeSubDirectories)
-        {
-            this.Path = path;
-
-            if (this.Path != String.Empty)
-            {
-                this.Title = System.IO.Path.GetFileNameWithoutExtension(this.Path);
-
-                foreach (String filePath in System.IO.Directory.EnumerateFiles(this.Path))
-                {
-                    FileListing listing = new FileListing(filePath);
-                    _Listings.Add(listing);
-                    _Listings = _Listings.OrderBy(o => o.Title).ToList();
-                }
-
-                if (includeSubDirectories)
-                {
-                    foreach (String directoryPath in System.IO.Directory.EnumerateDirectories(this.Path))
-                    {
-                        DirectoryListing listing = new DirectoryListing(directoryPath, false);
-                        _Listings.Add(listing);
-                    }
-                }
-            }
-        }
-        #endregion constructors
-
-        #region methods
         // TODO: Improve refactor _Listings and GetListings()
         public IListing[] GetListings()
         {
             List<IListing> sortedListings = new List<IListing>();
-            foreach (IListing listing in _Listings)
+            foreach (var listing in this.listings)
             {
                 sortedListings.Add(listing);
                 if (listing is DirectoryListing)
@@ -114,19 +113,19 @@ namespace Intranet.Controls
                     foreach (IListing subListing in directory.GetListings())
                     {
                         if (subListing is FileListing)
+                        {
                             sortedListings.Add(subListing);
+                        }
                     }
                 }
             }
+
             return sortedListings.ToArray();
         }
 
         public void Add(IListing listing)
         {
-            _Listings.Add(listing);
+            this.listings.Add(listing);
         }
-        #endregion methods
-
     }
-
 }

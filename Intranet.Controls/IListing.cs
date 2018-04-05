@@ -12,7 +12,8 @@ namespace Intranet.Controls
     /// </summary>
     public interface IListing
     {
-        String Path { get; }
-        String Title { get; }
+        string Path { get; }
+
+        string Title { get; }
     }
 }
